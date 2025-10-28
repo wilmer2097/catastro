@@ -5,20 +5,6 @@ require_once 'config.php';
 $mensaje = '';
 $mensajeTipo = '';
 $usuarioValue = '';
-$passwordGenerado = '';
-
-function generarPasswordTemporal(int $longitud = 12): string
-{
-    $caracteres = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%&*?';
-    $caracteresLength = strlen($caracteres);
-    $password = '';
-
-    for ($i = 0; $i < $longitud; $i++) {
-        $password .= $caracteres[random_int(0, $caracteresLength - 1)];
-    }
-
-    return $password;
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $usuario = trim($_POST['usuario'] ?? '');
@@ -35,19 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $operador = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($operador) {
-                $passwordGenerado = generarPasswordTemporal();
-                $hash = password_hash($passwordGenerado, PASSWORD_DEFAULT);
-
-                $updateSql = "UPDATE operadores
-                              SET ope_pass = :password, intentos_fallidos = 0, ultimo_acceso = NULL
-                              WHERE ope_id = :id";
-                $updateStmt = $pdo->prepare($updateSql);
-                $updateStmt->execute([
-                    ':password' => $hash,
-                    ':id' => $operador['ope_id'],
-                ]);
-
-                $mensaje = 'Se generó una nueva contraseña temporal. Úsela para iniciar sesión y cámbiela desde su perfil.';
+                $mensaje = 'Hemos registrado su solicitud. Un administrador se pondrá en contacto para restablecer la contraseña.';
                 $mensajeTipo = 'success';
             } else {
                 $mensaje = 'No encontramos una cuenta asociada a esos datos.';
@@ -178,18 +152,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border: 1px solid #cfc;
         }
 
-        .new-password {
-            background-color: #f5f7ff;
-            border: 1px dashed #667eea;
-            color: #333;
-            font-weight: 600;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            word-break: break-all;
-            text-align: center;
-        }
-
         .back-link {
             display: block;
             margin-top: 20px;
@@ -218,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="alert alert-<?= $mensajeTipo === 'success' ? 'success' : 'error' ?>"><?=h($mensaje)?></div>
             <?php endif; ?>
 
-            <p>Ingrese su usuario o correo electrónico y el sistema generará una contraseña temporal para restablecer el acceso.</p>
+            <p>Ingrese su usuario o correo electrónico y un miembro del equipo validará la cuenta para restablecer su acceso.</p>
 
             <form method="POST" action="">
                 <div class="form-group">
@@ -228,12 +190,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <button type="submit" class="btn-submit">Enviar solicitud</button>
             </form>
-
-            <?php if ($passwordGenerado): ?>
-                <div class="new-password">
-                    Nueva contraseña: <span><?= h($passwordGenerado) ?></span>
-                </div>
-            <?php endif; ?>
 
             <div class="back-link">
                 <a href="login.php">Volver al inicio de sesión</a>
