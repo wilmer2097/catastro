@@ -8,6 +8,12 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $action = $_GET['a'] ?? 'home';
 
+if (empty($_SESSION['loggedin'])) {
+  $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'] ?? 'index.php';
+  header('Location: login.php');
+  exit;
+}
+
 function view($path, $vars = []) {
   extract($vars);
   global $pdo;    
