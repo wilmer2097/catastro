@@ -2,6 +2,10 @@
 // index.php - simple router
 require __DIR__ . '/config.php';
 
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
 $action = $_GET['a'] ?? 'home';
 
 function view($path, $vars = []) {
@@ -13,7 +17,21 @@ function view($path, $vars = []) {
 }
 
 if ($action === 'home') {
-  view('home.php');
+  $stats = [
+    'inmuebles_total' => (int)$pdo->query("SELECT COUNT(*) FROM inmuebles")->fetchColumn(),
+    'inmuebles_multi' => (int)$pdo->query("SELECT COUNT(*) FROM inmuebles WHERE uso_mul = 1")->fetchColumn(),
+    'negocios_total'  => (int)$pdo->query("SELECT COUNT(*) FROM negocios")->fetchColumn(),
+    'negocios_imprenta' => (int)$pdo->query("SELECT COUNT(*) FROM negocios WHERE imprenta = 1")->fetchColumn(),
+  ];
+
+  $recentInmuebles = $pdo->query("SELECT id, calle, cdra, num, tipo, nombre, created_at FROM inmuebles ORDER BY created_at DESC LIMIT 5")->fetchAll();
+  $recentNegocios = $pdo->query("SELECT n.id, n.nombre, n.tipo, n.created_at, i.calle, i.cdra, i.num AS num_predio FROM negocios n JOIN inmuebles i ON n.inmueble_id = i.id ORDER BY n.created_at DESC LIMIT 5")->fetchAll();
+
+  view('home.php', [
+    'stats' => $stats,
+    'recentInmuebles' => $recentInmuebles,
+    'recentNegocios' => $recentNegocios,
+  ]);
   exit;
 }
 

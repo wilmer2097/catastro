@@ -18,3 +18,10 @@
   </div>
 </nav>
 <div class="container py-3">
+  <?php if (!empty($_SESSION['flash'])): ?>
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      <?=h($_SESSION['flash'])?>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+    <?php unset($_SESSION['flash']); ?>
+  <?php endif; ?>
