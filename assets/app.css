@@ -1,0 +1,60 @@
+/* app.css - Estilos minimalistas y neutros */
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  background: #f9fafb;
+  color: #111827;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  line-height: 1.5;
+}
+
+a { color: #374151; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Tarjetas y contenedores */
+.card { border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+.card-header { background: #fff; border-bottom: 1px solid #f3f4f6; }
+
+/* Formularios */
+.form-control, .form-select { border: 1px solid #d1d5db; border-radius: 6px; }
+.form-control:focus, .form-select:focus {
+  border-color: #111827 !important;
+  box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
+}
+.form-label { color: #111827; font-weight: 500; }
+
+/* Botones */
+.btn-primary {
+  background-color: #111827;
+  border-color: #111827;
+}
+.btn-primary:hover { background-color: #0b1220; border-color: #0b1220; }
+
+.btn-outline-secondary { color: #374151; border-color: #d1d5db; }
+.btn-outline-secondary:hover { color: #111827; background: #f3f4f6; border-color: #cbd5e1; }
+.btn-outline-primary { color: #111827; border-color: #d1d5db; }
+.btn-outline-primary:hover { color: #111827; background: #f3f4f6; border-color: #cbd5e1; }
+
+/* Tablas */
+.table> :not(caption)>*>* { background-color: #ffffff; }
+.table thead th { background: #f3f4f6; color: #111827; border-bottom-color: #e5e7eb; }
+.table-striped tbody tr:nth-of-type(odd) { background-color: #fafafa; }
+
+/* Navbar */
+.navbar-dark.bg-dark { background-color: #0f172a !important; }
+
+/* Utilitarios */
+.text-muted { color: #6b7280 !important; }
+.shadow-sm { box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important; }
+/* Responsive tables improvements */
+.table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 576px) {
+  .table { font-size: 0.92rem; }
+  .table td, .table th { padding: 0.5rem; vertical-align: middle; }
+}
+@media (max-width: 400px) {
+  .table { font-size: 0.88rem; }
+  .btn.btn-sm { padding: 0.25rem 0.5rem; }
+}

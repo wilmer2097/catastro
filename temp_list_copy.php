@@ -2,7 +2,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h2>Inmuebles</h2>
   <div class="d-flex gap-2">
-    <a class="btn btn-outline-secondary" href="index.php?a=reporte_inmuebles">Reporte acumulado</a>
+    <a class="btn btn-outline-secondary" href="reportes/inmuebles_acumulado.php" target="_blank">Reporte acumulado</a>
     <a class="btn btn-primary" href="?a=inmueble_new">Nuevo inmueble</a>
   </div>
   </div>
@@ -14,8 +14,8 @@
   </div>
   <div class="col-6 col-md-3">
     <select class="form-select" name="uso">
-      <option value="">Uso mÃºltiple: Todos</option>
-      <option value="1" <?= $uso==='1'?'selected':''; ?>>SÃ­</option>
+      <option value="">Uso múltiple: Todos</option>
+      <option value="1" <?= $uso==='1'?'selected':''; ?>>Sí</option>
       <option value="0" <?= $uso==='0'?'selected':''; ?>>No</option>
     </select>
   </div>
@@ -29,7 +29,7 @@
   </div>
   <div class="col-6 col-md-2">
     <select class="form-select" name="anio">
-      <option value="0">AÃ±o: Todos</option>
+      <option value="0">Año: Todos</option>
       <?php foreach (($anios ?? []) as $a): $sel = ((int)($anio ?? 0) === (int)$a['anio']) ? 'selected' : ''; ?>
         <option value="<?=h($a['anio'])?>" <?=$sel?>><?=h($a['anio'])?></option>
       <?php endforeach; ?>
@@ -55,13 +55,13 @@
       <th class="text-nowrap">ID</th>
       <th>Calle</th>
       <th class="d-none d-sm-table-cell">Cdra</th>
-      <th class="text-nowrap">NÃºmero</th>
+      <th class="text-nowrap">Número</th>
       <th class="d-none d-md-table-cell">Tipo</th>
       <th class="d-none d-lg-table-cell">Nombre del edificio</th>
       <th class="d-none d-lg-table-cell">Nro. Locales</th>
-      <th class="d-none d-lg-table-cell">Nro. SÃ³tanos</th>
+      <th class="d-none d-lg-table-cell">Nro. Zócalos</th>
       <th class="d-none d-lg-table-cell">Nro. Pisos</th>
-      <th class="d-none d-sm-table-cell">Uso mÃºltiple</th>
+      <th class="d-none d-sm-table-cell">Uso múltiple</th>
       <th class="text-nowrap">Acciones</th>
     </tr>
   </thead>
@@ -75,12 +75,12 @@
         <td class="d-none d-md-table-cell"><?=h($r['tipo'])?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nombre'])?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nlocals'] ?? '')?></td>
-        <td class="d-none d-lg-table-cell"><?=h($r['nro_sotanos'] ?? '')?></td>
+        <td class="d-none d-lg-table-cell"><?=h($r['nro_zocalos'] ?? '')?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nro_pisos'] ?? '')?></td>
-        <td class="d-none d-sm-table-cell"><?= !empty($r['uso_mul']) ? 'SÃ­' : 'No' ?></td>
+        <td class="d-none d-sm-table-cell"><?= !empty($r['uso_mul']) ? 'Sí' : 'No' ?></td>
         <td class="text-nowrap">
           <a class="btn btn-sm btn-outline-primary" href="?a=inmueble_edit&id=<?=$r['id']?>">Editar</a>
-          <a class="btn btn-sm btn-outline-danger" href="?a=inmueble_delete&id=<?=$r['id']?>" onclick="return confirm('Â¿Eliminar inmueble? Se marcarÃ¡ como inactivo.');">Eliminar</a>
+          <a class="btn btn-sm btn-outline-danger" href="?a=inmueble_delete&id=<?=$r['id']?>" onclick="return confirm('¿Eliminar inmueble? Se marcará como inactivo.');">Eliminar</a>
           <?php if (!empty($r['uso_mul'])): ?>
             <a class="btn btn-sm btn-success" href="?a=negocios&inmueble_id=<?=$r['id']?>">Ver negocios</a>
           <?php endif; ?>
@@ -90,8 +90,5 @@
   </tbody>
 </table>
 </div>
-
-
-
 
 

@@ -1,0 +1,74 @@
+# Root .htaccess for /gamarra/catastro/
+
+# -------- Básicos
+AddDefaultCharset utf-8
+Options -Indexes
+
+# -------- Seguridad por archivos (no depende de mod_rewrite)
+<Files .htaccess>
+  Require all denied
+</Files>
+
+# Bloquea archivos sensibles por extensión
+<FilesMatch "\.(env|ini|log|sql|bak|sh|pem|key)$">
+  Require all denied
+</FilesMatch>
+
+# Bloquea archivos de config si están en webroot
+<FilesMatch "^(config|auth)\.php$">
+  Require all denied
+</FilesMatch>
+
+# Niega accesos a carpetas comunes si se subieron por error
+RedirectMatch 404 ^/(gamarra/catastro/)?(vendor|node_modules|tests|\.git)(/|$)
+
+# -------- Cabeceras de seguridad
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # CSP: ajustada para Bootstrap desde jsDelivr
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:; font-src 'self' data: https://cdn.jsdelivr.net; connect-src 'self'; frame-ancestors 'self'"
+</IfModule>
+
+# (Opcional, sólo si controlas todo bibliotk.org)
+#<IfModule mod_headers.c>
+#  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+#</IfModule>
+
+# -------- Rewrites / Front controller
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /gamarra/catastro/
+
+  # Redirige HTTP -> HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Sirve archivos/directorios reales tal cual
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # Todo lo demás a index.php (front controller)
+  RewriteRule ^ index.php [QSA,L]
+</IfModule>
+
+# -------- PHP en producción (si el hosting lo permite)
+<IfModule mod_php.c>
+  php_flag display_errors Off
+  php_value error_reporting 0
+  php_value default_charset "UTF-8"
+</IfModule>
+
+# -------- Cache estática
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/svg+xml "access plus 7 days"
+</IfModule>

@@ -49,38 +49,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+            background: #f9fafb;
+            color: #111827;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 24px;
         }
 
         .recovery-container {
-            background: white;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
             border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
             overflow: hidden;
             max-width: 420px;
             width: 100%;
         }
 
         .recovery-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
+            background: transparent;
+            color: #111827;
+            padding: 24px;
             text-align: center;
+            border-bottom: 1px solid #f3f4f6;
         }
 
         .recovery-header h2 {
-            font-size: 24px;
-            margin-bottom: 5px;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 6px;
         }
 
         .recovery-content {
-            padding: 30px;
+            padding: 24px;
         }
 
         .recovery-content p {
@@ -103,34 +107,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         .form-group input {
             width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            padding: 11px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #fff;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(17,24,39,0.08);
         }
 
         .btn-submit {
             width: 100%;
             padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
+            background: #111827;
+            color: #ffffff;
+            border: 1px solid #111827;
+            border-radius: 6px;
+            font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: background-color 0.15s, transform 0.15s;
         }
 
         .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: #0b1220;
+            transform: translateY(-1px);
         }
 
         .alert {
@@ -159,7 +165,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         .back-link a {
-            color: #667eea;
+            color: #374151;
             text-decoration: none;
             font-size: 14px;
         }

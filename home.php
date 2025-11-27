@@ -12,7 +12,6 @@ $recentNegocios = $recentNegocios ?? [];
 <div class="py-4">
   <div class="bg-light border rounded-3 p-4 mb-4">
     <h1 class="mb-3">Catastro de Locales Comerciales</h1>
-    <p class="mb-0">Administra la información de predios (Formato 001) y negocios (Formato 002) desde un solo panel. Utiliza los accesos rápidos para registrar nuevos datos o revisar los listados existentes.</p>
   </div>
 
   <div class="row g-3 mb-4">
@@ -55,12 +54,11 @@ $recentNegocios = $recentNegocios ?? [];
     <div class="col-md-3">
       <div class="card h-100">
         <div class="card-body">
-          <h6 class="card-subtitle text-muted">Negocios con imprenta</h6>
-          <p class="display-6 mb-1"><?=number_format($stats['negocios_imprenta'])?></p>
-          <small class="text-muted">Comercios que emiten comprobantes.</small>
+          <h6 class="card-subtitle text-muted">Lista de negocios</h6>
+          <small class="text-muted">Navega el listado completo.</small>
         </div>
         <div class="card-footer bg-transparent border-0 pt-0">
-          <a class="btn btn-outline-secondary w-100" href="?a=negocios&q=imprenta">Buscar imprentas</a>
+          <a class="btn btn-outline-secondary w-100" href="?a=negocios">Ver negocios</a>
         </div>
       </div>
     </div>
@@ -81,7 +79,7 @@ $recentNegocios = $recentNegocios ?? [];
                   <div class="d-flex justify-content-between">
                     <div>
                       <div class="fw-semibold"><?=h($item['calle'])?> C<?=h($item['cdra'])?> #<?=h($item['num'])?></div>
-                      <div class="small text-muted"><?=h($item['tipo'])?> <?= $item['nombre'] ? '· '.h($item['nombre']) : '' ?></div>
+                      <div class="small text-muted"><?=h($item['tipo'])?> <?= $item['nombre'] ? '— '.h($item['nombre']) : '' ?></div>
                     </div>
                     <small class="text-muted"><?=$fecha?></small>
                   </div>
@@ -108,7 +106,7 @@ $recentNegocios = $recentNegocios ?? [];
                   <div class="d-flex justify-content-between">
                     <div>
                       <div class="fw-semibold"><?=h($item['nombre'])?></div>
-                      <div class="small text-muted"><?=h($item['tipo'])?> · <?=h($item['calle'])?> C<?=h($item['cdra'])?> #<?=h($item['num_predio'])?></div>
+                      <div class="small text-muted"><?=h($item['tipo'])?> — <?=h($item['calle'])?> C<?=h($item['cdra'])?> #<?=h($item['num_predio'])?></div>
                     </div>
                     <small class="text-muted"><?=$fecha?></small>
                   </div>
@@ -123,3 +121,4 @@ $recentNegocios = $recentNegocios ?? [];
     </div>
   </div>
 </div>
+

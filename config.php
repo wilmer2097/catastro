@@ -1,10 +1,13 @@
 <?php
-// config.php
-// Update these values for your MySQL server
 $DB_HOST = getenv('DB_HOST') ?: 'localhost';
 $DB_NAME = getenv('DB_NAME') ?: 'catastro';
 $DB_USER = getenv('DB_USER') ?: 'root';
 $DB_PASS = getenv('DB_PASS') ?: 'root';
+
+// Forzar cabecera UTF-8 para evitar problemas de acentos
+if (!headers_sent()) {
+  header('Content-Type: text/html; charset=utf-8');
+}
 
 try {
   $pdo = new PDO("mysql:host=$DB_HOST;dbname=$DB_NAME;charset=utf8mb4", $DB_USER, $DB_PASS, [

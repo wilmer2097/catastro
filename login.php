@@ -3,7 +3,7 @@ session_start();
 require_once 'config.php';
 
 if (!empty($_SESSION['loggedin'])) {
-    header('Location: dashboard.php');
+    header('Location: index.php?a=home');
     exit();
 }
 
@@ -21,9 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errorMessage = 'Por favor complete todos los campos.';
     } else {
         try {
-            $sql = "SELECT * FROM operadores
-                    WHERE (ope_user = :usuario OR ope_login = :usuario)
-                    AND bestado = 1
+            $sql = "SELECT o.*, p.perf_nombre, p.perf_descripcion
+                    FROM operador o
+                    LEFT JOIN perfil p ON p.perf_id = o.perf_id
+                    WHERE o.ope_user = :usuario
+                      AND o.bestado = 1
                     LIMIT 1";
             $stmt = $pdo->prepare($sql);
             $stmt->execute([':usuario' => $usuario]);
@@ -32,27 +34,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($operador) {
                 if ((int)$operador['intentos_fallidos'] >= 5) {
                     $errorMessage = 'Cuenta bloqueada por múltiples intentos fallidos. Contacte al administrador.';
-                } elseif (password_verify($password, $operador['ope_pass'])) {
-                    $_SESSION['operador_id'] = (int)$operador['ope_id'];
-                    $_SESSION['operador_nombre'] = $operador['ope_nombre'];
-                    $_SESSION['operador_user'] = $operador['ope_user'];
-                    $_SESSION['operador_rol'] = $operador['ope_rol'];
-                    $_SESSION['operador_img'] = $operador['ope_img'];
+                } elseif ($password === $operador['ope_pass']) {
+                    $_SESSION['operador'] = [
+                        'ope_id' => (int)$operador['ope_id'],
+                        'ope_user' => $operador['ope_user'],
+                        'ope_nombre' => $operador['ope_nombre'],
+                        'perf_id' => (int)$operador['perf_id'],
+                        'perf_nombre' => $operador['perf_nombre'] ?? '',
+                        'perf_descripcion' => $operador['perf_descripcion'] ?? '',
+                    ];
+                    $_SESSION['operador_img'] = $operador['ope_img'] ?? null;
                     $_SESSION['loggedin'] = true;
 
-                    $updateSql = "UPDATE operadores
+                    $updateSql = "UPDATE operador
                                    SET ultimo_acceso = NOW(), intentos_fallidos = 0
                                    WHERE ope_id = :id";
                     $updateStmt = $pdo->prepare($updateSql);
                     $updateStmt->execute([':id' => $operador['ope_id']]);
 
-                    $redirect = $_SESSION['redirect_after_login'] ?? 'dashboard.php';
+                    $redirect = $_SESSION['redirect_after_login'] ?? 'index.php?a=home';
                     unset($_SESSION['redirect_after_login']);
 
                     header('Location: ' . $redirect);
                     exit();
                 } else {
-                    $updateSql = "UPDATE operadores
+                    $updateSql = "UPDATE operador
                                    SET intentos_fallidos = intentos_fallidos + 1
                                    WHERE ope_id = :id";
                     $updateStmt = $pdo->prepare($updateSql);
@@ -77,137 +83,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema de Catastro</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .login-container {
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .login-header h2 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .login-header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .login-form {
-            padding: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .form-group input.error {
-            border-color: #e74c3c;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-
-        .alert-success {
-            background-color: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
-        }
-
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
-        }
-
-        .forgot-password {
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .forgot-password a {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-        }
-
-        .forgot-password a:hover {
-            text-decoration: underline;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; background: #f9fafb; color: #111827; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 24px; }
+        .login-container { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); overflow: hidden; max-width: 400px; width: 100%; }
+        .login-header { background: transparent; color: #111827; padding: 24px; text-align: center; border-bottom: 1px solid #f3f4f6; }
+        .login-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+        .login-header p { font-size: 14px; color: #6b7280; }
+        .login-form { padding: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px; }
+        .form-group input { width: 100%; padding: 11px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
+        .form-group input:focus { outline: none; border-color: #111827; box-shadow: 0 0 0 3px rgba(17,24,39,0.08); }
+        .form-group input.error { border-color: #e74c3c; }
+        .alert { padding: 12px; border-radius: 5px; margin-bottom: 20px; font-size: 14px; }
+        .alert-error { background-color: #fee; color: #c33; border: 1px solid #fcc; }
+        .alert-success { background-color: #efe; color: #3c3; border: 1px solid #cfc; }
+        .btn-login { width: 100%; padding: 12px; background: #111827; color: #ffffff; border: 1px solid #111827; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.15s, transform 0.15s; }
+        .btn-login:hover { background: #0b1220; transform: translateY(-1px); }
+        .btn-login:active { transform: translateY(0); }
+        .forgot-password { text-align: center; margin-top: 15px; }
+        .forgot-password a { color: #374151; text-decoration: none; font-size: 14px; }
+        .forgot-password a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -227,8 +123,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="form-group">
-                <label for="usuario">Usuario o Correo</label>
-                <input type="text" id="usuario" name="usuario" placeholder="Ingrese su usuario o correo" required value="<?=h($usuarioValue)?>">
+                <label for="usuario">Usuario</label>
+                <input type="text" id="usuario" name="usuario" placeholder="Ingrese su usuario" required value="<?=h($usuarioValue)?>">
             </div>
 
             <div class="form-group">
@@ -247,36 +143,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script>
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             let isValid = true;
-
             const usuario = document.getElementById('usuario');
             const password = document.getElementById('password');
-
-            if (usuario.value.trim() === '') {
-                usuario.classList.add('error');
-                isValid = false;
-            } else {
-                usuario.classList.remove('error');
-            }
-
-            if (password.value.trim() === '') {
-                password.classList.add('error');
-                isValid = false;
-            } else {
-                password.classList.remove('error');
-            }
-
-            if (!isValid) {
-                e.preventDefault();
-            }
+            if (usuario.value.trim() === '') { usuario.classList.add('error'); isValid = false; } else { usuario.classList.remove('error'); }
+            if (password.value.trim() === '') { password.classList.add('error'); isValid = false; } else { password.classList.remove('error'); }
+            if (!isValid) { e.preventDefault(); }
         });
-
-        document.getElementById('usuario').addEventListener('input', function() {
-            this.classList.remove('error');
-        });
-
-        document.getElementById('password').addEventListener('input', function() {
-            this.classList.remove('error');
-        });
+        document.getElementById('usuario').addEventListener('input', function() { this.classList.remove('error'); });
+        document.getElementById('password').addEventListener('input', function() { this.classList.remove('error'); });
     </script>
 </body>
 </html>
+

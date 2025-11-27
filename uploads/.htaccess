@@ -1,0 +1,14 @@
+# Treat everything here as data only; never execute
+<FilesMatch "\.(php|phtml|php3|php4|php5|phps)$">
+  Require all denied
+</FilesMatch>
+
+# Extra hardening for some hosts
+RemoveHandler .php .phtml .php3 .php4 .php5 .phps
+php_flag engine off
+
+# Allow typical asset types
+AddType image/png .png
+AddType image/jpeg .jpg .jpeg
+AddType image/svg+xml .svg
+AddType application/pdf .pdf

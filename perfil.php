@@ -1,6 +1,4 @@
 <?php
-require_once 'auth.php';
-
 $operador = operador_actual();
 
 if (!$operador['id']) {
@@ -9,7 +7,7 @@ if (!$operador['id']) {
 }
 
 try {
-    $stmt = $pdo->prepare('SELECT * FROM operadores WHERE ope_id = :id LIMIT 1');
+    $stmt = $pdo->prepare('SELECT * FROM operador WHERE ope_id = :id LIMIT 1');
     $stmt->execute([':id' => $operador['id']]);
     $operadorDb = $stmt->fetch(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -60,13 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     try {
-        $stmt = $pdo->prepare('SELECT ope_id FROM operadores WHERE ope_user = :user AND ope_id <> :id LIMIT 1');
+        $stmt = $pdo->prepare('SELECT ope_id FROM operador WHERE ope_user = :user AND ope_id <> :id LIMIT 1');
         $stmt->execute([':user' => $formData['ope_user'], ':id' => $operador['id']]);
         if ($stmt->fetch()) {
             $errores[] = 'El usuario ingresado ya se encuentra en uso.';
         }
 
-        $stmt = $pdo->prepare('SELECT ope_id FROM operadores WHERE ope_login = :login AND ope_id <> :id LIMIT 1');
+        $stmt = $pdo->prepare('SELECT ope_id FROM operador WHERE ope_login = :login AND ope_id <> :id LIMIT 1');
         $stmt->execute([':login' => $formData['ope_login'], ':id' => $operador['id']]);
         if ($stmt->fetch()) {
             $errores[] = 'El correo electrónico ingresado ya se encuentra en uso.';
@@ -80,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($nuevaPassword !== '' || $confirmarPassword !== '' || $passwordActual !== '') {
         if ($nuevaPassword === '' || $confirmarPassword === '' || $passwordActual === '') {
             $errores[] = 'Para cambiar la contraseña complete todos los campos del bloque de seguridad.';
-        } elseif (!password_verify($passwordActual, $operadorDb['ope_pass'])) {
+        } elseif ($passwordActual !== $operadorDb['ope_pass']) {
             $errores[] = 'La contraseña actual no es correcta.';
         } elseif ($nuevaPassword !== $confirmarPassword) {
             $errores[] = 'La nueva contraseña y su confirmación no coinciden.';
@@ -93,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errores) {
         try {
-            $sql = 'UPDATE operadores SET ope_user = :user, ope_nombre = :nombre, ope_login = :login, ope_telefono = :telefono';
+            $sql = 'UPDATE operador SET ope_user = :user, ope_nombre = :nombre, ope_login = :login, ope_telefono = :telefono';
             $params = [
                 ':user' => $formData['ope_user'],
                 ':nombre' => $formData['ope_nombre'],
@@ -104,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($actualizarPassword) {
                 $sql .= ', ope_pass = :pass';
-                $params[':pass'] = password_hash($nuevaPassword, PASSWORD_BCRYPT);
+                $params[':pass'] = $nuevaPassword;
             }
 
             $sql .= ' WHERE ope_id = :id';
@@ -133,8 +131,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
-include __DIR__ . '/partials/header.php';
 ?>
 <div class="row justify-content-center">
   <div class="col-lg-8">
@@ -157,7 +153,7 @@ include __DIR__ . '/partials/header.php';
           <div class="alert alert-success"><?=h($successMessage)?></div>
         <?php endif; ?>
 
-        <form method="POST" action="" novalidate>
+        <form method="POST" action="index.php?a=perfil" novalidate>
           <div class="row g-3">
             <div class="col-md-6">
               <label for="ope_user" class="form-label">Usuario</label>
@@ -198,7 +194,7 @@ include __DIR__ . '/partials/header.php';
           </div>
 
           <div class="d-flex justify-content-end gap-2 mt-4">
-            <a href="?a=home" class="btn btn-outline-secondary">Cancelar</a>
+            <a href="index.php?a=home" class="btn btn-outline-secondary" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location='index.php?a=home'; }">Cancelar</a>
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
         </form>
@@ -206,4 +202,3 @@ include __DIR__ . '/partials/header.php';
     </div>
   </div>
 </div>
-<?php include __DIR__ . '/partials/footer.php'; ?>
