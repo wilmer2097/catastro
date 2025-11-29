@@ -43,6 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'perf_nombre' => $operador['perf_nombre'] ?? '',
                         'perf_descripcion' => $operador['perf_descripcion'] ?? '',
                     ];
+                    $_SESSION['operador_nombre'] = $operador['ope_nombre'];
                     $_SESSION['operador_img'] = $operador['ope_img'] ?? null;
                     $_SESSION['loggedin'] = true;
 
@@ -82,29 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Sistema de Catastro</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Ubuntu, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif; background: #f9fafb; color: #111827; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 24px; }
-        .login-container { background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); overflow: hidden; max-width: 400px; width: 100%; }
-        .login-header { background: transparent; color: #111827; padding: 24px; text-align: center; border-bottom: 1px solid #f3f4f6; }
-        .login-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
-        .login-header p { font-size: 14px; color: #6b7280; }
-        .login-form { padding: 24px; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; font-size: 14px; }
-        .form-group input { width: 100%; padding: 11px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; font-size: 14px; transition: border-color 0.2s, box-shadow 0.2s; }
-        .form-group input:focus { outline: none; border-color: #111827; box-shadow: 0 0 0 3px rgba(17,24,39,0.08); }
-        .form-group input.error { border-color: #e74c3c; }
-        .alert { padding: 12px; border-radius: 5px; margin-bottom: 20px; font-size: 14px; }
-        .alert-error { background-color: #fee; color: #c33; border: 1px solid #fcc; }
-        .alert-success { background-color: #efe; color: #3c3; border: 1px solid #cfc; }
-        .btn-login { width: 100%; padding: 12px; background: #111827; color: #ffffff; border: 1px solid #111827; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background-color 0.15s, transform 0.15s; }
-        .btn-login:hover { background: #0b1220; transform: translateY(-1px); }
-        .btn-login:active { transform: translateY(0); }
-        .forgot-password { text-align: center; margin-top: 15px; }
-        .forgot-password a { color: #374151; text-decoration: none; font-size: 14px; }
-        .forgot-password a:hover { text-decoration: underline; }
-    </style>
+    <link rel="stylesheet" href="assets/css/auth.css">
 </head>
 <body>
     <div class="login-container">
@@ -140,18 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            let isValid = true;
-            const usuario = document.getElementById('usuario');
-            const password = document.getElementById('password');
-            if (usuario.value.trim() === '') { usuario.classList.add('error'); isValid = false; } else { usuario.classList.remove('error'); }
-            if (password.value.trim() === '') { password.classList.add('error'); isValid = false; } else { password.classList.remove('error'); }
-            if (!isValid) { e.preventDefault(); }
-        });
-        document.getElementById('usuario').addEventListener('input', function() { this.classList.remove('error'); });
-        document.getElementById('password').addEventListener('input', function() { this.classList.remove('error'); });
-    </script>
+    <script src="assets/js/login.js"></script>
 </body>
 </html>
 

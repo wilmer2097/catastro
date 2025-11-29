@@ -24,6 +24,11 @@ if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 
 }
 $_SESSION['last_activity'] = time();
 
+// Normalizar nombre de operador para vistas
+if (!isset($_SESSION['operador_nombre']) && !empty($_SESSION['operador']['ope_nombre'])) {
+    $_SESSION['operador_nombre'] = $_SESSION['operador']['ope_nombre'];
+}
+
 function operador_actual(): array {
     $op = $_SESSION['operador'] ?? [];
     return [

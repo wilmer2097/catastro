@@ -23,11 +23,12 @@
           <td><?=h($r['cdra_fin'])?></td>
           <td class="text-nowrap">
             <a class="btn btn-sm btn-outline-primary" href="?a=calle_edit&id=<?= (int)$r['id'] ?>">Editar</a>
-            <a class="btn btn-sm btn-outline-danger" href="?a=calle_delete&id=<?= (int)$r['id'] ?>" onclick="return confirm('¿Eliminar calle?');">Eliminar</a>
+            <a class="btn btn-sm btn-outline-danger" href="?a=calle_delete&id=<?= (int)$r['id'] ?>">Eliminar</a>
           </td>
         </tr>
       <?php endforeach; ?>
     </tbody>
   </table>
 </div>
+<script src="assets/js/calles_list.js"></script>
 

@@ -15,7 +15,7 @@
   <div class="col-6 col-md-3">
     <select class="form-select" name="uso">
       <option value="">Uso múltiple: Todos</option>
-      <option value="1" <?= $uso==='1'?'selected':''; ?>>Sí</option>
+      <option value="1" <?= $uso==='1'?'selected':''; ?>>Si</option>
       <option value="0" <?= $uso==='0'?'selected':''; ?>>No</option>
     </select>
   </div>
@@ -74,24 +74,20 @@
         <td><?=h($r['num'])?></td>
         <td class="d-none d-md-table-cell"><?=h($r['tipo'])?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nombre'])?></td>
-        <td class="d-none d-lg-table-cell"><?=h($r['nlocals'] ?? '')?></td>
+        <td class="d-none d-lg-table-cell"><?=h($r['nro_locales'] ?? '')?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nro_sotanos'] ?? '')?></td>
         <td class="d-none d-lg-table-cell"><?=h($r['nro_pisos'] ?? '')?></td>
-        <td class="d-none d-sm-table-cell"><?= !empty($r['uso_mul']) ? 'Sí' : 'No' ?></td>
+        <td class="d-none d-sm-table-cell"><?= !empty($r['uso_mul']) ? 'Si' : 'No' ?></td>
         <td class="text-nowrap">
-          <a class="btn btn-sm btn-outline-primary" href="?a=inmueble_edit&id=<?=$r['id']?>">Editar</a>
-          <a class="btn btn-sm btn-outline-danger" href="?a=inmueble_delete&id=<?=$r['id']?>" onclick="return confirm('¿Eliminar inmueble? Se marcará como inactivo.');">Eliminar</a>
+          <a class="btn btn-sm btn-outline-primary" href="?a=inmueble_edit&id=<?=h($r['id'])?>">Editar</a>
+          <a class="btn btn-sm btn-outline-danger" href="?a=inmueble_delete&id=<?=h($r['id'])?>">Eliminar</a>
           <?php if (!empty($r['uso_mul'])): ?>
-            <a class="btn btn-sm btn-success" href="?a=negocios&inmueble_id=<?=$r['id']?>">Ver negocios</a>
+            <a class="btn btn-sm btn-success" href="?a=negocios&inmueble_id=<?=h($r['id'])?>">Ver negocios</a>
           <?php endif; ?>
         </td>
       </tr>
-    <?php endforeach; ?>
-  </tbody>
+<?php endforeach; ?>
+</tbody>
 </table>
 </div>
-
-
-
-
-
+<script src="assets/js/inmuebles_list.js"></script>

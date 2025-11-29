@@ -36,26 +36,26 @@
     <textarea name="r3" class="form-control" rows="2"><?=h($row['r3'] ?? '')?></textarea>
   </div>
   <div class="col-12">
-    <label class="form-label">4. ¿Cuánto estaría dispuesto a pagar por un curso de formación para mejorar el negocio aquí dentro del damero de Gamarra?</label>
+    <label class="form-label">4. ¿Cuánto estaría dispuesto a pagar por un curso de formación para mejorar el negocio?</label>
     <textarea name="r4" class="form-control" rows="2"><?=h($row['r4'] ?? '')?></textarea>
   </div>
   <div class="col-12">
-    <label class="form-label">5. ¿Un servicio de imprenta (tarjetas, volantes, afiches, etc.) con reparto a la ubicación del negocio le serviría?</label>
+    <label class="form-label">5. ¿Un servicio de imprenta (tarjetas, volantes, afiches, etc.) con reparto al negocio le serviría?</label>
     <textarea name="r5" class="form-control" rows="2"><?=h($row['r5'] ?? '')?></textarea>
   </div>
   <div class="col-12">
-    <label class="form-label">6. ¿Un servicio de catálogo electrónico de productos gestionado por usted mismo le serviría?</label>
+    <label class="form-label">6. ¿Un servicio de catálogo electrónico de productos autogestionado le serviría?</label>
     <textarea name="r6" class="form-control" rows="2"><?=h($row['r6'] ?? '')?></textarea>
   </div>
   <div class="col-md-4"><label class="form-label">Contacto</label><input name="contacto" class="form-control" value="<?=h($row['contacto'] ?? '')?>"></div>
   <div class="col-md-4"><label class="form-label">Cargo</label><input name="cargo" class="form-control" value="<?=h($row['cargo'] ?? '')?>"></div>
   <div class="col-md-4"><label class="form-label">Teléfono</label><input name="telefono" class="form-control" value="<?=h($row['telefono'] ?? '')?>"></div>
   <div class="col-md-4"><label class="form-label">RUC</label><input name="ruc" class="form-control" value="<?=h($row['ruc'] ?? '')?>"></div>
-  <div class="col-md-4"><label class="form-label">Tamaño (m²)</label><input type="number" step="0.01" name="tam_m2" class="form-control" value="<?=h($row['tam_m2'] ?? '')?>"></div>
+  <div class="col-md-4"><label class="form-label">Tamaño (m2)</label><input type="number" step="0.01" name="tam_m2" class="form-control" value="<?=h($row['tam_m2'] ?? '')?>"></div>
   <div class="col-md-4 d-flex align-items-end">
     <div class="form-check">
       <input class="form-check-input" type="checkbox" name="imprenta" <?= !empty($row['imprenta'])?'checked':''; ?>>
-      <label class="form-check-label">¿Uso de servicio de imprenta?</label>
+      <label class="form-check-label">¿Usa servicio de imprenta?</label>
     </div>
   </div>
   <div class="col-12">

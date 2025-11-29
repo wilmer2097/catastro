@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $actualizarPassword = false;
     if ($nuevaPassword !== '' || $confirmarPassword !== '' || $passwordActual !== '') {
         if ($nuevaPassword === '' || $confirmarPassword === '' || $passwordActual === '') {
-            $errores[] = 'Para cambiar la contraseña complete todos los campos del bloque de seguridad.';
+            $errores[] = 'Para cambiar la contraseña completa todos los campos del bloque de seguridad.';
         } elseif ($passwordActual !== $operadorDb['ope_pass']) {
             $errores[] = 'La contraseña actual no es correcta.';
         } elseif ($nuevaPassword !== $confirmarPassword) {
@@ -110,8 +110,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $pdo->prepare($sql);
             $stmt->execute($params);
 
+            // Refrescar datos en sesiÃ³n para reflejar en el navbar
             $_SESSION['operador_nombre'] = $formData['ope_nombre'];
             $_SESSION['operador_user'] = $formData['ope_user'];
+            if (!empty($_SESSION['operador'])) {
+                $_SESSION['operador']['ope_nombre'] = $formData['ope_nombre'];
+                $_SESSION['operador']['ope_user'] = $formData['ope_user'];
+                $_SESSION['operador']['ope_login'] = $formData['ope_login'];
+                $_SESSION['operador']['ope_telefono'] = $formData['ope_telefono'];
+            }
 
             $operadorDb = array_merge($operadorDb, [
                 'ope_user' => $formData['ope_user'],
@@ -194,7 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="d-flex justify-content-end gap-2 mt-4">
-            <a href="index.php?a=home" class="btn btn-outline-secondary" onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location='index.php?a=home'; }">Cancelar</a>
+            <a href="index.php?a=home" class="btn btn-outline-secondary">Cancelar</a>
             <button type="submit" class="btn btn-primary">Guardar cambios</button>
           </div>
         </form>
@@ -202,3 +209,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 </div>
+<script src="assets/js/perfil.js"></script>

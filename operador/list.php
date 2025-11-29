@@ -13,7 +13,7 @@ $rows = $rows ?? [];
         <th>Usuario</th>
         <th>Nombre</th>
         <th>Correo</th>
-        <th>TelÃ©fono</th>
+        <th>Teléfono</th>
         <th>Perfil</th>
         <th>Estado</th>
         <th class="text-nowrap">Acciones</th>
@@ -34,7 +34,7 @@ $rows = $rows ?? [];
               <a class="btn btn-sm btn-outline-primary" href="index.php?a=operador_edit&id=<?= (int)$r['ope_id'] ?>">Editar</a>
               <?php if ((int)$r['perf_id'] !== 1): ?>
                 <?php if (!empty($r['bestado'])): ?>
-                  <a class="btn btn-sm btn-outline-danger" href="index.php?a=operador_toggle&id=<?= (int)$r['ope_id'] ?>&b=0" onclick="return confirm('Â¿Desactivar operador?');">Desactivar</a>
+                  <a class="btn btn-sm btn-outline-danger" href="index.php?a=operador_toggle&id=<?= (int)$r['ope_id'] ?>&b=0">Desactivar</a>
                 <?php else: ?>
                   <a class="btn btn-sm btn-outline-success" href="index.php?a=operador_toggle&id=<?= (int)$r['ope_id'] ?>&b=1">Activar</a>
                 <?php endif; ?>
@@ -48,3 +48,4 @@ $rows = $rows ?? [];
     </tbody>
   </table>
 </div>
+<script src="assets/js/operador_list.js"></script>

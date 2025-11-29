@@ -1,4 +1,28 @@
-<?php $rows = $rows ?? []; $operador = $operador ?? 0; $anio = $anio ?? 0; $mes = $mes ?? 0; $operadores = $operadores ?? []; $anios = $anios ?? []; ?>
+<?php
+$rows = $rows ?? [];
+$operador = $operador ?? 0;
+$anio = $anio ?? 0;
+$mes = $mes ?? 0;
+$inmueble_id = $inmueble_id ?? 0;
+$operadores = $operadores ?? [];
+$anios = $anios ?? [];
+$inmuebles = $inmuebles ?? [];
+
+$formatInmueble = function(array $r): string {
+  $base = trim($r['nombre'] ?? '');
+  $dir = trim(($r['calle'] ?? '').' C'.($r['cdra'] ?? '').' #'.($r['num'] ?? ''));
+  return $base !== '' ? ($base.' — '.$dir) : $dir;
+};
+$selectedInmuebleLabel = '';
+if (!empty($inmueble_id)) {
+  foreach ($inmuebles as $im) {
+    if ((int)$im['id'] === (int)$inmueble_id) {
+      $selectedInmuebleLabel = $formatInmueble($im);
+      break;
+    }
+  }
+}
+?>
 <div class="d-flex justify-content-between align-items-center mb-3">
   <h2>Negocios</h2>
   <div class="d-flex gap-2">
@@ -9,11 +33,29 @@
 
 <form class="row g-2 mb-3">
   <input type="hidden" name="a" value="negocios">
-  <?php if (!$inmueble_id): ?>
   <div class="col-md-3">
     <input class="form-control" name="q" placeholder="Buscar por negocio, producto o calle" value="<?=h($q)?>">
   </div>
-  <?php endif; ?>
+  <div class="col-12 col-md-4">
+    <div class="dropdown w-100" data-search-dropdown>
+      <button class="form-select text-start d-flex align-items-center justify-content-between" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="inmuebleDropdownBtn">
+        <span class="text-truncate" id="inmuebleDropdownLabel"><?=h($selectedInmuebleLabel ?: 'Todos los inmuebles')?></span>
+        <span class="ms-2 text-muted flex-shrink-0">▾</span>
+      </button>
+      <div class="dropdown-menu p-2 w-100 shadow-sm">
+        <input type="text" class="form-control form-control-sm mb-2" placeholder="Buscar inmueble..." autocomplete="off" data-search-input>
+        <div class="list-group list-group-flush dropdown-search-list" data-search-list>
+          <button type="button" class="list-group-item list-group-item-action small<?= $inmueble_id ? '' : ' active'; ?>" data-id="" data-label="Todos los inmuebles">Todos los inmuebles</button>
+          <?php foreach ($inmuebles as $im): ?>
+            <?php $label = $formatInmueble($im); ?>
+            <?php $active = ((int)$im['id'] === (int)$inmueble_id) ? ' active' : ''; ?>
+            <button type="button" class="list-group-item list-group-item-action small<?=$active?>" data-id="<?=h($im['id'])?>" data-label="<?=h($label)?>"><?=h($label)?></button>
+          <?php endforeach; ?>
+        </div>
+      </div>
+      <input type="hidden" name="inmueble_id" id="inmuebleIdInput" value="<?=h($inmueble_id)?>">
+    </div>
+  </div>
   <div class="col-6 col-md-3">
     <select class="form-select" name="operador">
       <option value="0">Operador: Todos</option>
@@ -61,11 +103,10 @@
       <td><?=h($r['telefono'])?></td>
       <td>
         <a class="btn btn-sm btn-outline-primary" href="?a=negocio_edit&id=<?=$r['id']?>">Editar</a>
-        <a class="btn btn-sm btn-outline-danger" href="?a=negocio_delete&id=<?=$r['id']?>" onclick="return confirm('ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¿Eliminar negocio?');">Eliminar</a>
+        <a class="btn btn-sm btn-outline-danger" href="?a=negocio_delete&id=<?=$r['id']?>">Eliminar</a>
       </td>
     </tr>
   <?php endforeach; ?>
   </tbody>
 </table></div>
-
-
+<script src="assets/js/negocios_list.js"></script>

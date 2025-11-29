@@ -116,7 +116,7 @@ if ($action === 'inmueble_save') {
     'tipo'=> $_POST['tipo'] ?? '',
     'nombre'=> $_POST['nombre'] ?? '',
     // Nuevos/normativos: numeros de locales, zocalos, pisos
-    'nlocals'=> isset($_POST['nlocals']) && $_POST['nlocals'] !== '' ? (int)$_POST['nlocals'] : null,
+    'nro_locales'=> isset($_POST['nro_locales']) && $_POST['nro_locales'] !== '' ? (int)$_POST['nro_locales'] : null,
     'nro_sotanos'=> isset($_POST['nro_sotanos']) && $_POST['nro_sotanos'] !== '' ? (int)$_POST['nro_sotanos'] : null,
     'nro_pisos'=> isset($_POST['nro_pisos']) && $_POST['nro_pisos'] !== '' ? (int)$_POST['nro_pisos'] : null,
     'dir1'=> '',
@@ -167,7 +167,7 @@ if ($action === 'inmueble_save') {
     $cols = ['calle','cdra','num','uso_mul','tipo','nombre','dir1','dir2','dir3','dir4','ope_id'];
     $vals = [$data['calle'],$data['cdra'],$data['num'],$data['uso_mul'],$data['tipo'],$data['nombre'],$data['dir1'],$data['dir2'],$data['dir3'],$data['dir4'],$opeId];
     if ($data['calle_id'] && table_has_column($pdo,'inmuebles','calle_id')) { $cols[]='calle_id'; $vals[]=$data['calle_id']; }
-    if ($data['nlocals'] !== null && table_has_column($pdo,'inmuebles','nlocals')) { $cols[]='nlocals'; $vals[]=$data['nlocals']; }
+    if ($data['nro_locales'] !== null && table_has_column($pdo,'inmuebles','nro_locales')) { $cols[]='nro_locales'; $vals[]=$data['nro_locales']; }
     if ($data['nro_sotanos'] !== null && table_has_column($pdo,'inmuebles','nro_sotanos')) { $cols[]='nro_sotanos'; $vals[]=$data['nro_sotanos']; }
     if ($data['nro_pisos'] !== null && table_has_column($pdo,'inmuebles','nro_pisos')) { $cols[]='nro_pisos'; $vals[]=$data['nro_pisos']; }
     $placeholders = rtrim(str_repeat('?,', count($cols)),',');
@@ -191,7 +191,7 @@ if ($action === 'inmueble_save') {
       $data['dir1'],$data['dir2'],$data['dir3'],$data['dir4'],$data['ope_mod']
     ];
     if ($data['calle_id'] && table_has_column($pdo,'inmuebles','calle_id')) { $sets[]='calle_id=?'; $vals[]=$data['calle_id']; }
-    if ($data['nlocals'] !== null && table_has_column($pdo,'inmuebles','nlocals')) { $sets[]='nlocals=?'; $vals[]=$data['nlocals']; }
+    if ($data['nro_locales'] !== null && table_has_column($pdo,'inmuebles','nro_locales')) { $sets[]='nro_locales=?'; $vals[]=$data['nro_locales']; }
     if ($data['nro_sotanos'] !== null && table_has_column($pdo,'inmuebles','nro_sotanos')) { $sets[]='nro_sotanos=?'; $vals[]=$data['nro_sotanos']; }
     if ($data['nro_pisos'] !== null && table_has_column($pdo,'inmuebles','nro_pisos')) { $sets[]='nro_pisos=?'; $vals[]=$data['nro_pisos']; }
     $setsSql = implode(', ',$sets);
@@ -625,6 +625,9 @@ if ($action === 'negocios') {
   // Catalogos de filtros
   try { $operadores = $pdo->query("SELECT ope_id, ope_nombre FROM operador WHERE bestado = 1 ORDER BY ope_nombre")->fetchAll(); } catch (Throwable $e) { $operadores = []; }
   try { $anios = $pdo->query("SELECT DISTINCT YEAR(created_at) AS anio FROM negocios WHERE created_at IS NOT NULL ORDER BY anio DESC")->fetchAll(); } catch (Throwable $e) { $anios = []; }
+  try {
+    $inmueblesCatalogo = $pdo->query("SELECT id, nombre, calle, cdra, num FROM inmuebles WHERE bestado = 1 ORDER BY COALESCE(NULLIF(nombre,''), calle), cdra, num")->fetchAll();
+  } catch (Throwable $e) { $inmueblesCatalogo = []; }
   view('negocios/list.php', [
     'rows'=>$rows,
     'inmueble_id'=>$inmueble_id,
@@ -634,6 +637,7 @@ if ($action === 'negocios') {
     'mes'=>$mes,
     'operadores'=>$operadores,
     'anios'=>$anios,
+    'inmuebles'=>$inmueblesCatalogo,
   ]);
   exit;
 }
@@ -665,6 +669,12 @@ if ($action === 'negocio_save') {
     'tam_m2'=> $_POST['tam_m2'] ?? null,
     'imprenta'=> isset($_POST['imprenta']) ? 1 : 0,
   ];
+  // Normalizar metros: enviar NULL si viene vacío para no romper DECIMAL
+  if ($data['tam_m2'] === '' || $data['tam_m2'] === null) {
+    $data['tam_m2'] = null;
+  } else {
+    $data['tam_m2'] = (float)$data['tam_m2'];
+  }
   if (!$data['inmueble_id'] || !$data['nombre']) {
     $_SESSION['flash'] = "Selecciona un inmueble y coloca nombre del negocio.";
     header('Location: ?a=negocio_new'); exit;
@@ -717,4 +727,3 @@ if ($action === 'negocio_delete') {
 
 http_response_code(404);
 echo "Ruta no encontrada";
-
